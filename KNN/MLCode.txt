@@ -1,0 +1,86 @@
+XTrain = [];
+for i=1:6283
+img = imread(['D:\mystuff\PhD\PhD2015spring\MachineLearning\trainResized\trainResized' '\' num2str(i) '.bmp']);
+if(ndims(img) == 3)
+img = rgb2gray(img);
+end
+img = img';
+img = img(:);
+XTrain = [XTrain img];
+end
+
+ks = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9'}
+
+yTrain = importdata('D:\mystuff\PhD\PhD2015spring\MachineLearning\trainLabels.csv',',',6283)
+knn=7;
+	for i=1:length(yTrain) 
+		display(i)
+		for z=1:length(yTrain) 
+		differences(z,:) = XTrain(:,z) - XTrain(:,i); 
+		end
+	%distances(i,:) = sum(double(differences).^1,2)'; 
+	distances(i,:) = max(differences,[],2); 
+	distances(i, i) = max(distances(i,:))+1; 
+	[ordered_distance, ordered_list]=sort(distances(i,:)); 
+		for e=1:knn
+		topys(e) = strcmp(yTrain{ordered_list(e)}(1,length(yTrain{ordered_list(e)})), yTrain{i}(1,length(yTrain(i))));
+		end 
+		if sum(topys)>0 predicted(i) = 1; 
+		else predicted(i)= -1;
+		end
+	end
+	err=sum(predicted)/length(yTrain); 
+	display(err)
+
+
+
+XTrain = [];
+for i=1:6283
+img = imread(['D:\mystuff\PhD\PhD2015spring\MachineLearning\trainResized\trainResized' '\' num2str(i) '.bmp']);
+if(ndims(img) == 3)
+img = rgb2gray(img);
+end
+img = img';
+img = img(:);
+XTrain = [XTrain img];
+end
+	
+XTest = [];
+for i=6284:12503
+img = imread(['D:\mystuff\PhD\PhD2015spring\MachineLearning\testResized\testResized' '\' num2str(i) '.bmp']);
+if(ndims(img) == 3)
+img = rgb2gray(img);
+end
+img = img';
+img = img(:);
+XTest = [XTest img];
+end
+
+ks = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9'}
+
+yTrain = importdata('D:\mystuff\PhD\PhD2015spring\MachineLearning\trainLabels.csv',',',6283)
+
+knn=7;
+	for i=1:length(XTest) 
+		display(i)
+		for z=1:length(yTrain) 
+		differences(z,:) = XTrain(:,z) - XTest(:,i); 
+		end
+	%distances(i,:) = sum(double(differences).^1,2)'; 
+	distances(i,:) = max(differences,[],2); 
+	distances(i, i) = max(distances(i,:))+1; 
+	[ordered_distance, ordered_list]=sort(distances(i,:)); 
+	topys = zeros(1,length(ks));
+		for e=1:knn
+			for c=1:length(ks)
+				if(strcmp(yTrain{ordered_list(e)}(1,length(yTrain{ordered_list(e)})), ks(c)) > 0)
+					topys(c) = topys(c) + 1;
+				end
+			end
+		%topys(e) = strcmp(yTrain{ordered_list(e)}(1,length(yTrain{ordered_list(e)})), yTrain{i}(1,length(yTrain(i))));
+		end 
+		[H,I] = max(topys)
+		predicted(i) = ks(I); 
+	end
+	display(predicted)
+	
